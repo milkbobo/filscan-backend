@@ -14,12 +14,12 @@ import (
 
 const PrecisionDefault = 8
 
-var BlocksPerEpoch = big.NewInt(build.BlocksPerEpoch)
+var BlocksPerEpoch = big.NewInt(int64(build.BlocksPerEpoch))
 
 func ToFil(v *big.Int) float64 {
 	fbig, _ := big.NewFloat(0).SetString(v.String())
 	fv, _ := fbig.Float64()
-	return TruncateNative(fv/build.FilecoinPrecision, PrecisionDefault)
+	return TruncateNative(fv/float64(build.FilecoinPrecision), PrecisionDefault)
 }
 
 func ToFilStr(v *big.Int) string {
