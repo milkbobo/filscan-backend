@@ -19,6 +19,7 @@ require (
 	github.com/ipfs/go-cid v0.0.6
 	github.com/ipfs/go-ipfs-blockstore v1.0.0
 	github.com/ipfs/go-log v1.0.4
+	github.com/coreos/go-systemd/v22 v22.0.0
 	github.com/libp2p/go-libp2p-core v0.6.0
 	github.com/savaki/geoip2 v0.0.0-20150727150920-9968b08fbf39
 	github.com/shiena/ansicolor v0.0.0-20151119151921-a422bbe96644 // indirect
@@ -32,6 +33,5 @@ require (
 	gopkg.in/urfave/cli.v2 v2.0.0-20180128182452-d3ae77c26ac8
 )
 
-replace github.com/coreos/go-systemd => github.com/coreos/go-systemd/v22 v22.0.0
 
 replace github.com/ipfs/go-filestore => github.com/ipfs/go-filestore v1.0.0
