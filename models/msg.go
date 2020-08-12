@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/filecoin-project/lotus/api"
 	"github.com/filecoin-project/lotus/chain/types"
+	"github.com/filecoin-project/specs-actors/actors/crypto"
 	"github.com/globalsign/mgo"
 	"gopkg.in/mgo.v2/bson"
 	"strconv"
@@ -30,7 +31,7 @@ type FilscanMsg struct {
 	MsgCreate     uint64          `bson:"msg_create" json:"msg_create"`
 	GmtCreate     int64           `bson:"gmt_create" json:"gmt_create"`
 	GmtModified   int64           `bson:"gmt_modified" json:"gmt_modified"`
-	Signature     types.Signature `bson:"signature" json:"signature"`
+	Signature     crypto.Signature `bson:"signature" json:"signature"`
 }
 
 type FilscanMsgResult struct {

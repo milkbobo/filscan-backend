@@ -68,7 +68,7 @@ func AddTipSet(t *types.TipSet) error {
 	tips.ParentKey = t.Parents().String()
 
 	tips.Cids = t.Cids()
-	tips.Height = t.Height()
+	tips.Height = uint64(t.Height())
 	tips.Mintime = t.MinTimestamp()
 	tips.Parents = t.Parents().Cids()
 	tips.GmtCreate = TimeNow
@@ -181,7 +181,7 @@ func (hl Heights_list) To_Height_map() map[uint64]*Heights {
 }
 
 func (h *Heights) IsTipset(tipset *types.TipSet) bool {
-	return h.Height == tipset.Height() &&
+	return h.Height == uint64(tipset.Height()) &&
 		h.ParenteKey == tipset.Parents().String() &&
 		h.TipsetKey == tipset.Key().String()
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/filecoin-project/lotus/chain/types"
 	"math/big"
 
-	"github.com/filecoin-project/lotus/chain/vm"
+	//"github.com/filecoin-project/lotus/chain/vm"
 	"github.com/globalsign/mgo"
 	"gopkg.in/mgo.v2/bson"
 	"time"
@@ -162,7 +162,7 @@ func Loop_WalkThroughTipsetRewards(ctx context.Context) error {
 					previouse_tipset_rewards = last_tipset_rewards
 				}
 
-				block_reward = vm.MiningReward(remaining_filcoin)
+				//block_reward = vm.MiningReward(remaining_filcoin)
 
 				// Block.BlockHeader.Timestamp
 				tipset_rewards = &TipsetBlockRewards{
