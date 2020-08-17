@@ -4,7 +4,15 @@ import (
 	"reflect"
 
 	"github.com/filecoin-project/go-address"
-	"github.com/filecoin-project/lotus/chain/actors"
+//	"github.com/filecoin-project/lotus/chain/actors"
+	"github.com/filecoin-project/specs-actors/actors/builtin"
+	in "github.com/filecoin-project/specs-actors/actors/builtin/init"
+	"github.com/filecoin-project/specs-actors/actors/builtin/miner"
+	"github.com/filecoin-project/specs-actors/actors/builtin/multisig"
+	"github.com/filecoin-project/specs-actors/actors/builtin/market"
+	"github.com/filecoin-project/specs-actors/actors/builtin/power"
+	"github.com/filecoin-project/specs-actors/actors/builtin/paych"
+	"github.com/filecoin-project/specs-actors/actors/runtime"
 	"github.com/filecoin-project/lotus/chain/types"
 	"github.com/ipfs/go-cid"
 )
@@ -15,9 +23,13 @@ var (
 	actorInfos = map[cid.Cid]ActorInfo{}
 
 	addressToCode = map[address.Address]cid.Cid{
-		actors.InitAddress:          actors.InitCodeCid,
-		actors.StoragePowerAddress:  actors.StoragePowerCodeCid,
-		actors.StorageMarketAddress: actors.StorageMarketCodeCid,
+		builtin.SystemActorAddr:	builtin.SystemActorCodeID,
+		builtin.InitActorAddr:          builtin.InitActorCodeID,
+		builtin.RewardActorAddr:	builtin.RewardActorCodeID,
+		builtin.CronActorAddr:		builtin.CronActorCodeID,
+		builtin.StoragePowerActorAddr:  builtin.StoragePowerActorCodeID,
+		builtin.StorageMarketActorAddr:	builtin.StorageMarketActorCodeID,
+		builtin.VerifiedRegistryActorAddr:builtin.VerifiedRegistryActorCodeID,
 	}
 )
 
@@ -26,7 +38,7 @@ var (
 	TypeNull     = reflect.TypeOf(null)
 	TypeNil      = reflect.TypeOf(nil)
 	TypeActorPtr = reflect.TypeOf((*types.Actor)(nil))
-	TypeVMCtx    = reflect.TypeOf(new(types.VMContext)).Elem()
+	TypeVMCtx    = reflect.TypeOf(new(runtime.Runtime)).Elem()
 )
 
 type actorInterface interface {
@@ -34,18 +46,19 @@ type actorInterface interface {
 }
 
 func init() {
-	actorInfos[actors.AccountCodeCid] = ActorInfo{
+	actorInfos[builtin.AccountActorCodeID] = ActorInfo{
 		Name:      "AccountActor",
 		Methods:   []MethodInfo{},
 		methodMap: map[uint64]int{},
 	}
 
-	actorInfos[actors.InitCodeCid] = parseActor(actors.InitActor{}, actors.IAMethods)
-	actorInfos[actors.StorageMinerCodeCid] = parseActor(actors.StorageMinerActor{}, actors.MAMethods)
-	actorInfos[actors.MultisigCodeCid] = parseActor(actors.MultiSigActor{}, actors.MultiSigMethods)
-	actorInfos[actors.StorageMarketCodeCid] = parseActor(actors.StorageMarketActor{}, actors.SMAMethods)
-	actorInfos[actors.StoragePowerCodeCid] = parseActor(actors.StoragePowerActor{}, actors.SPAMethods)
-	actorInfos[actors.PaymentChannelCodeCid] = parseActor(actors.PaymentChannelActor{}, actors.PCAMethods)
+	// can add other actorInfo
+	actorInfos[builtin.InitActorCodeID] = parseActor(in.Actor{}, builtin.MethodsInit)
+	actorInfos[builtin.StorageMinerActorCodeID] = parseActor(miner.Actor{}, builtin.MethodsMiner)
+	actorInfos[builtin.MultisigActorCodeID] = parseActor(multisig.Actor{}, builtin.MethodsMultisig)
+	actorInfos[builtin.StorageMarketActorCodeID] = parseActor(market.Actor{}, builtin.MethodsMarket)
+	actorInfos[builtin.StoragePowerActorCodeID] = parseActor(power.Actor{}, builtin.MethodsPower)
+	actorInfos[builtin.PaymentChannelActorCodeID] = parseActor(paych.Actor{}, builtin.MethodsPaych)
 }
 
 // LookupByAddress find actor with given code
