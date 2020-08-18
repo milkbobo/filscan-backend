@@ -70,7 +70,7 @@ func (self *Block_message) fs_messages() []*models.FilscanMsg {
 			BlockCid:      self.Block.Cid().String(),
 			RequiredFunds: v.RequiredFunds(),
 			Size:          int64(len(data)),
-			Height:        self.Block.Height,
+			Height:        uint64(self.Block.Height),
 			MsgCreate:     self.Block.Timestamp,
 			GmtCreate:     now,
 			GmtModified:   now}
@@ -93,7 +93,7 @@ func (self *Block_message) fs_messages() []*models.FilscanMsg {
 			BlockCid:      self.Block.Cid().String(),
 			RequiredFunds: secp.Message.RequiredFunds(),
 			Size:          int64(len(data)),
-			Height:        self.Block.Height,
+			Height:        uint64(self.Block.Height),
 			MsgCreate:     self.Block.Timestamp,
 			GmtCreate:     now,
 			GmtModified:   now,
@@ -164,7 +164,7 @@ func (self *Tipset_block_messages) build_models_data() (*models.FilscanTipSet, [
 			// 设置message相关的receipt
 			if receipt, exist := receipt_ref[fsmsg.Cid]; exist && receipt != nil {
 				fsmsg.ExitCode = strconv.Itoa(int(receipt.ExitCode))
-				fsmsg.GasUsed = receipt.GasUsed.String()
+				fsmsg.GasUsed = strconv.FormatInt(int64(receipt.GasUsed), 10)
 				fsmsg.Return = string(receipt.Return)
 			}
 			model_msgs = append(model_msgs, fsmsg)
@@ -330,7 +330,7 @@ func to_fs_tipset(tipset *types.TipSet) *models.FilscanTipSet {
 		Key:          tipset.Key().String(),
 		ParentKey:    tipset.Parents().String(),
 		Cids:         tipset.Cids(),
-		Height:       tipset.Height(),
+		Height:       uint64(tipset.Height()),
 		Mintime:      tipset.MinTimestamp(),
 		Parents:      tipset.Parents().Cids(),
 		GmtCreate:    now,
