@@ -95,7 +95,7 @@ func GetfilscanprotoTipsetByHeight(startHeight, endHeight uint64) (res []*filsca
 	tipset := flscaner.List().FindTipset_in_height(startHeight, endHeight)
 	var queueStart uint64
 	if len(tipset) > 0 {
-		queueStart = tipset[0].Tipset.Height()
+		queueStart = uint64(tipset[0].Tipset.Height())
 		//if tipset[0].tipset.Height() >= startHeight && tipset[len(tipset)-1].tipset.Height()>= endHeight { // all data in cash
 		//	queueTipElement = tipset
 		//}else { //part data in cash
@@ -168,7 +168,7 @@ func TipSet2FilscanTipSet(tipsetArr []*types.TipSet) (res []*models.FilscanTipSe
 	for _, t := range tipsetArr {
 		var tips models.FilscanTipSet
 		tips.Cids = t.Cids()
-		tips.Height = t.Height()
+		tips.Height = uint64(t.Height())
 		tips.Parents = t.Parents().Cids()
 		tips.MinTicketCId = t.MinTicketBlock().Cid()
 		tbyte, _ := json.Marshal(tips)

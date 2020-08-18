@@ -78,8 +78,8 @@ func (entry *SliceEntry) UpdatePush(e *models.Element, parentHeight uint64) bool
 		})
 	}
 
-	for i := 1; e.Tipset.Height()-uint64(i) > parentHeight; i++ { //分叉链:父节点 与当前节点 之前跳高
-		entry.DelTipsetByHeight(e.Tipset.Height() - uint64(i))
+	for i := 1; uint64(e.Tipset.Height())-uint64(i) > parentHeight; i++ { //分叉链:父节点 与当前节点 之前跳高
+		entry.DelTipsetByHeight(uint64(e.Tipset.Height()) - uint64(i))
 	}
 	//fmt.Println(">>>>>>>>>>>>>>>>>>", entry.Size(), "<<<<<<<<<<<<<<<<<<<<<")
 	return true
@@ -356,11 +356,11 @@ func (entry *SliceEntry) MsgByBlockCid(blockCids []string) []*models.FilscanMsg 
 func (entry *SliceEntry) TipsetByOneHeight(Height uint64) *models.Element {
 	entry.Lock()
 	defer entry.Unlock()
-	if len(entry.element) < 1 || entry.element[0].Tipset.Height() > Height || entry.element[len(entry.element)-1].Tipset.Height() < Height {
+	if len(entry.element) < 1 || uint64(entry.element[0].Tipset.Height()) > Height || uint64(entry.element[len(entry.element)-1].Tipset.Height()) < Height {
 		return nil
 	}
 	for _, value := range entry.element {
-		if value.Tipset.Height() == Height {
+		if uint64(value.Tipset.Height()) == Height {
 			return value
 		}
 	}
@@ -370,11 +370,11 @@ func (entry *SliceEntry) TipsetByOneHeight(Height uint64) *models.Element {
 func (entry *SliceEntry) DelTipsetByHeight(Height uint64) {
 	entry.Lock()
 	defer entry.Unlock()
-	if len(entry.element) < 1 || entry.element[0].Tipset.Height() > Height || entry.element[len(entry.element)-1].Tipset.Height() < Height {
+	if len(entry.element) < 1 || uint64(entry.element[0].Tipset.Height()) > Height || uint64(entry.element[len(entry.element)-1].Tipset.Height()) < Height {
 		return
 	}
 	for key, value := range entry.element {
-		if value.Tipset.Height() == Height {
+		if uint64(value.Tipset.Height()) == Height {
 			entry.element = append(entry.element[:key], entry.element[key+1:]...)
 		}
 	}
@@ -386,10 +386,10 @@ func (entry *SliceEntry) TipsetByHeight(startHeight, endHeight uint64) []*models
 	defer entry.Unlock()
 	var res []*models.Element
 	for _, value := range entry.element {
-		if value.Tipset.Height() > endHeight {
+		if uint64(value.Tipset.Height()) > endHeight {
 			return res
 		}
-		if value.Tipset.Height() >= startHeight && value.Tipset.Height() <= endHeight {
+		if uint64(value.Tipset.Height()) >= startHeight && uint64(value.Tipset.Height()) <= endHeight {
 			res = append(res, value)
 		}
 	}
@@ -502,7 +502,7 @@ func (entry *SliceEntry) MsgUpdateReceipt(msg []api.Message, msgReceipt []*types
 						if err != nil {
 							fmt.Sprintf("err =%v", err)
 						}
-						m.GasUsed = msR[k].GasUsed.String()
+						m.GasUsed = strconv.FormatInt(msR[k].GasUsed, 10)
 						m.Return = returnS.Return
 						m.ExitCode = strconv.Itoa(int(returnS.ExitCode))
 						//m.ExitCode = returnS.ExitCode

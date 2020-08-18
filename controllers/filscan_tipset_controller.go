@@ -189,7 +189,7 @@ func (this *FilscanTipset) BlockConfirmCount(ctx context.Context, input *filscan
 			return resp, nil
 		} else {
 			// count += uint64(len(TipsetQueue.TipsetByHeight(bm.Block.BlockHeader.Height, TipsetQueue.element[len(TipsetQueue.element)-1].Tipset.Height()))) //cash中 tipset高度 > bm高度 的数量
-			count += uint64(len(TipsetQueue().FindTipset_in_height(bm.Block.BlockHeader.Height, TipsetQueue().Front().Height())))
+			count += uint64(len(TipsetQueue().FindTipset_in_height(uint64(bm.Block.BlockHeader.Height), uint64(TipsetQueue().Front().Height()))))
 		}
 	} else {
 		than, err := models.ThanHeightCount(tipset.Height)

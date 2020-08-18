@@ -111,7 +111,7 @@ Search_Height:
 				return resp, nil
 			}
 			// if (height > 0 && height < t.Height) || (height > 0 && TipsetQueue.Size() > 0 && TipsetQueue.element[TipsetQueue.Size()-1].Tipset.Height() > height) {
-			if (height > 0 && height < t.Height) || flscaner.List().Front().Height() > height {
+			if (height > 0 && height < t.Height) || uint64(flscaner.List().Front().Height()) > height {
 				res = "Height"
 				goto End
 			} else {
@@ -216,9 +216,9 @@ func (this *FilscanServer) BaseInformation(ctx context.Context, input *common.Em
 		// if TipsetQueue.Size() > 0 {
 		if flscaner.List().Size() > 0 {
 			// lotusBaseInformation.TipsetHeight = TipsetQueue.element[len(TipsetQueue.element)-1].Tipset.Height()
-			lotusBaseInformation.TipsetHeight = flscaner.List().Front().Height()
+			lotusBaseInformation.TipsetHeight = uint64(flscaner.List().Front().Height())
 		} else {
-			lotusBaseInformation.TipsetHeight = tipset.Height()
+			lotusBaseInformation.TipsetHeight = uint64(tipset.Height())
 			if tipset.Height() < 1 {
 				res, _ := models.GetMaxTipSet()
 				lotusBaseInformation.TipsetHeight = res.Height

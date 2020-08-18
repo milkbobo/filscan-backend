@@ -740,7 +740,7 @@ func GetActorByAddress(ad string) (actor *types.Actor, err error) {
 		ps("get ActorByAddress failed, message:%s\n", err.Error())
 		return nil, err
 	}
-	actor, err = LotusApi.StateGetActor(context.TODO(), address, tipset)
+	actor, err = LotusApi.StateGetActor(context.TODO(), address, tipset.Key())
 	return
 }
 
@@ -754,7 +754,7 @@ func GetLotusHead() (tipset *types.TipSet, err error) {
 }
 
 func GetPledgeCollateral(tipset *types.TipSet) (string, error) {
-	bigInt, err := LotusApi.StatePledgeCollateral(context.TODO(), tipset)
+	bigInt, err := LotusApi.StatePledgeCollateral(context.TODO(), tipset.Key())
 	if err != nil {
 		return "", err
 	}
