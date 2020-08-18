@@ -47,7 +47,7 @@ func (self *fs_synced_tipset) update_with_tipset(tipset *types.TipSet) *fs_synce
 	}
 	self.Key = tipset.Key().String()
 	self.ParentKey = tipset.Parents().String()
-	self.Height = tipset.Height()
+	self.Height = uint64(tipset.Height())
 	return self
 }
 
