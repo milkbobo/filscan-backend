@@ -6,19 +6,21 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/filecoin-project/lotus/build"
-	"github.com/filecoin-project/lotus/chain/actors"
+	//"github.com/filecoin-project/lotus/build"
+	//"github.com/filecoin-project/lotus/chain/actors"
 	"github.com/filecoin-project/lotus/chain/types"
-	"github.com/filecoin-project/lotus/chain/vm"
+	"github.com/filecoin-project/specs-actors/actors/builtin"
+	//"github.com/filecoin-project/lotus/chain/vm"
 )
 
 // const PrecisionDefault = 8 // float64(0.00001)
 
-var blocksPerEpoch = big.NewInt(build.BlocksPerEpoch)
+// TODO WEN
+var blocksPerEpoch = big.NewInt(int64(5))
 
 // 返回每个周期中的奖励filcoin数量和释放的奖励数量
 func (fs *Filscaner) future_block_rewards(timediff, repeate uint64) ([]*big.Int, *big.Int, error) {
-	coffer, err := fs.api.WalletBalance(fs.ctx, actors.NetworkAddress)
+	coffer, err := fs.api.WalletBalance(fs.ctx, builtin.RewardActorAddr)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -41,10 +43,11 @@ func (fs *Filscaner) future_block_rewards(timediff, repeate uint64) ([]*big.Int,
 		sums[i] = big.NewInt(0)
 
 		for c := uint64(0); c < block_diff; c += block_daliy.Uint64() {
-			a := vm.MiningReward(coffer)
-			a.Mul(a.Int, blocksPerEpoch)
-
-			reward_daliy.Mul(a.Int, block_daliy)
+			// TODO WEN
+			//a := vm.MiningReward(coffer)
+			a:=big.NewInt(0)
+			a.Mul(a, blocksPerEpoch)
+			reward_daliy.Mul(a, block_daliy)
 
 			// fmt.Printf("block reward=%.3f, daliy reward=%.3f\n", ToFil(a.Int), ToFil(reward_daliy))
 
@@ -62,8 +65,10 @@ func (fs *Filscaner) future_block_rewards(timediff, repeate uint64) ([]*big.Int,
 func SelfTipsetRewards(remainingReward *big.Int) *big.Int {
 	remaining := types.NewInt(0)
 	remaining.Set(remainingReward)
-	rewards := vm.MiningReward(remaining)
-	return rewards.Mul(rewards.Int, blocksPerEpoch)
+	//TODO WEN
+	//rewards := vm.MiningReward(remaining)
+	//return rewards.Mul(rewards.Int, blocksPerEpoch)
+	return big.NewInt(0)
 }
 
 func (fs *Filscaner) released_reward_at_height(height uint64) *big.Int {
@@ -89,7 +94,7 @@ func (fs *Filscaner) list_genesis_miners() (*Tipset_miner_messages, error) {
 	if err != nil {
 		return nil, err
 	}
-	miners, err := fs.api.StateListMiners(fs.ctx, tipset)
+	miners, err := fs.api.StateListMiners(fs.ctx, tipset.Key())
 	if err != nil {
 		return nil, err
 	}

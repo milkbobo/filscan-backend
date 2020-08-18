@@ -22,7 +22,7 @@ func (fs *Filscaner) DisplayTipset(tipset *types.TipSet) {
 func (fs *Filscaner) ChainTipsetByHeightTest() {
 	var tipset *types.TipSet
 
-	tipset, err := fs.api.ChainGetTipSetByHeight(fs.ctx, 100, nil)
+	tipset, err := fs.api.ChainGetTipSetByHeight(fs.ctx, 100, types.EmptyTSK)
 	if err != nil {
 		fs.Printf("get tipsetbyheight(10000) failed, message:%s", err.Error())
 		return

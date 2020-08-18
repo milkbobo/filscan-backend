@@ -40,6 +40,7 @@ func (fs *Filscaner) handle_new_headers(headers []*api.HeadChange) {
 func (fs *Filscaner) sync_tipset_with_heights(heights []uint64) error {
 	for _, height := range heights {
 		tipset, err := fs.api.ChainGetTipSetByHeight(fs.ctx, abi.ChainEpoch(height), types.EmptyTSK)
+		tipset = tipset
 		if err != nil {
 			//TODO:判断是否为lotus节点crush掉, 或者是网络问题,
 			// 如果是, 应该过一段时间后, 重新尝试获取
