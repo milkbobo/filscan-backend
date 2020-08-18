@@ -202,7 +202,7 @@ func (fsc *Fs_tipset_cache) FindTipset_height(height uint64) *models.Element {
 	for back := fsc.list.Back(); back != nil; back = back.Prev() {
 		block_message := back.Value.(*Tipset_block_messages)
 
-		if block_message.Tipset.Height() == height {
+		if uint64(block_message.Tipset.Height()) == height {
 			return &models.Element{block_message.Tipset, block_message.fs_block_message}
 		}
 	}
@@ -219,11 +219,11 @@ func (fsc *Fs_tipset_cache) FindTipset_in_height(start, end uint64) []*models.El
 	for back := fsc.list.Back(); back != nil; back = back.Prev() {
 		block_message := back.Value.(*Tipset_block_messages)
 
-		if block_message.Tipset.Height() > end {
+		if uint64(block_message.Tipset.Height()) > end {
 			break
 		}
 
-		if block_message.Tipset.Height() < start {
+		if uint64(block_message.Tipset.Height()) < start {
 			continue
 		}
 
