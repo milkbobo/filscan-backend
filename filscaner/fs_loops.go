@@ -5,6 +5,8 @@ import (
 	"github.com/filecoin-project/lotus/api"
 	"math/big"
 	"time"
+	"github.com/filecoin-project/specs-actors/actors/abi"
+	"github.com/filecoin-project/lotus/chain/types"
 )
 
 func (fs *Filscaner) display_notifi_(header *api.HeadChange) {
@@ -25,17 +27,19 @@ func (fs *Filscaner) handle_new_headers(headers []*api.HeadChange) {
 		}
 
 		fs.display_notifi_(header)
-
+		// TODO WEN
+		/*
 		if header.Type == store.HCApply {
 			fs.handle_appl_tipset(header.Val, nil)
 			fs.last_appl_tipset = header.Val
 		}
+		*/
 	}
 }
 
 func (fs *Filscaner) sync_tipset_with_heights(heights []uint64) error {
 	for _, height := range heights {
-		tipset, err := fs.api.ChainGetTipSetByHeight(fs.ctx, height, nil)
+		tipset, err := fs.api.ChainGetTipSetByHeight(fs.ctx, abi.ChainEpoch(height), types.EmptyTSK)
 		if err != nil {
 			//TODO:判断是否为lotus节点crush掉, 或者是网络问题,
 			// 如果是, 应该过一段时间后, 重新尝试获取
@@ -48,7 +52,8 @@ func (fs *Filscaner) sync_tipset_with_heights(heights []uint64) error {
 		case <-fs.ctx.Done():
 			return fs.ctx.Err()
 		default:
-			fs.head_notifier <- &store.HeadChange{Val: tipset, Type: store.HCApply}
+			// TODO WEN
+			//fs.head_notifier <- &store.HeadChange{Val: tipset, Type: store.HCApply}
 		}
 		// time.Sleep(time.Millisecond * 200)
 	}
@@ -158,7 +163,7 @@ func (fs *Filscaner) loop_init_block_rewards() {
 
 	// 每25个height间隔一个数据库记录
 	// 每20 * 25个height间隔保存一次
-	for i := head_block_rewards.Height; i < head_height; i++ {
+	for i := head_block_rewards.Height; i < uint64(head_height); i++ {
 		rewards := SelfTipsetRewards(total_rewards)
 
 		total_rewards.Sub(total_rewards, rewards)
