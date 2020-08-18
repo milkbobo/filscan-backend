@@ -12,6 +12,7 @@ import (
 	"github.com/ipfs-force-community/common"
 	"math/big"
 	"time"
+	"github.com/filecoin-project/specs-actors/actors/abi"
 )
 
 var resp_success = &common.Result{Code: 3, Msg: "success"}
@@ -121,13 +122,13 @@ func (fs *Filscaner) FilOutStanding(ctx context.Context, req *FilOutstandReq) (*
 
 		filoutresp_data.Floating = utils.ToFilStr(max_released_reward)
 
-		tipset, err := fs.api.ChainGetTipSetByHeight(fs.ctx, max_height, nil)
+		tipset, err := fs.api.ChainGetTipSetByHeight(fs.ctx, abi.ChainEpoch(max_height), types.EmptyTSK)
 		if err != nil {
 			fs.Printf("chain_get_tipset_by_height(%d) failed,message;%s\n", err.Error())
 			continue
 		}
 
-		pleged, err := fs.api.StatePledgeCollateral(ctx, tipset)
+		pleged, err := fs.api.StatePledgeCollateral(ctx, tipset.Key())
 		if err != nil {
 			set_with_last_data(data, filoutresp_data)
 			fs.Printf("StatePledgeCollateral failed,message;%s\n", err.Error())
@@ -324,27 +325,27 @@ func (fs *Filscaner) BalanceIncreased(ctx context.Context, req *BalanceIncreaseR
 		return resp, nil
 	}
 
-	tipset_start, err := fs.api.ChainGetTipSetByHeight(fs.ctx, height_start, nil)
+	tipset_start, err := fs.api.ChainGetTipSetByHeight(fs.ctx, abi.ChainEpoch(height_start), types.EmptyTSK)
 	if err != nil {
 		fs.Printf("chain_get_tipset_by_height faild, message:%s\n", err.Error())
 		resp.Res = resp_lotus_api_error
 		return resp, nil
 	}
 
-	tipset_end, err := fs.api.ChainGetTipSetByHeight(fs.ctx, height_end, nil)
+	tipset_end, err := fs.api.ChainGetTipSetByHeight(fs.ctx, abi.ChainEpoch(height_end), types.EmptyTSK)
 	if err != nil {
 		fs.Printf("chain_get_tipset_by_height faild, message:%s\n", err.Error())
 		resp.Res = resp_lotus_api_error
 		return resp, nil
 	}
 
-	balance_start, err := fs.api.StateGetActor(fs.ctx, miner, tipset_start)
+	balance_start, err := fs.api.StateGetActor(fs.ctx, miner, tipset_start.Key())
 	if err != nil {
 		fs.Printf("state_get_actor faild, message:%s\n", err.Error())
 		resp.Res = resp_lotus_api_error
 		return resp, nil
 	}
-	balance_end, err := fs.api.StateGetActor(fs.ctx, miner, tipset_end)
+	balance_end, err := fs.api.StateGetActor(fs.ctx, miner, tipset_end.Key())
 	if err != nil {
 		fs.Printf("state_get_actor faild, message:%s\n", err.Error())
 		resp.Res = resp_lotus_api_error

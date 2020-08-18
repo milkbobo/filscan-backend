@@ -8,7 +8,6 @@ import (
 	"filscan_lotus/utils"
 	"github.com/astaxie/beego/config"
 	"github.com/filecoin-project/lotus/api"
-	"github.com/filecoin-project/lotus/chain/store"
 	"github.com/filecoin-project/lotus/chain/types"
 	"github.com/globalsign/mgo"
 	"math/big"
@@ -34,7 +33,7 @@ type Filscaner struct {
 
 	conf config.Configer
 
-	head_notifier                 chan *store.HeadChange
+	head_notifier                 chan *api.HeadChange
 	tipset_miner_messages_notifer chan []*Tipset_miner_messages
 
 	// 已经同步到的tipset高度,当程序重启时,
@@ -116,7 +115,7 @@ func (fs *Filscaner) init_lotus_client(lotus_api api.FullNode) error {
 	if err != nil {
 		return err
 	}
-	fs.refresh_height_state(tipset.Height())
+	fs.refresh_height_state(uint64(tipset.Height()))
 	return nil
 }
 
@@ -132,7 +131,7 @@ func (fs *Filscaner) Init(ctx context.Context, config_path string, lotusApi api.
 		return err
 	}
 
-	fs.head_notifier = make(chan *store.HeadChange)
+	fs.head_notifier = make(chan *api.HeadChange)
 	fs.tipset_miner_messages_notifer = make(chan []*Tipset_miner_messages)
 
 	fs.to_update_miner_size = 512

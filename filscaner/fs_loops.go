@@ -2,12 +2,12 @@ package filscaner
 
 import (
 	"filscan_lotus/models"
-	"github.com/filecoin-project/lotus/chain/store"
+	"github.com/filecoin-project/lotus/api"
 	"math/big"
 	"time"
 )
 
-func (fs *Filscaner) display_notifi_(header *store.HeadChange) {
+func (fs *Filscaner) display_notifi_(header *api.HeadChange) {
 	parent, _ := fs.api.ChainGetTipSet(fs.ctx, header.Val.Parents())
 	head, _ := fs.api.ChainHead(fs.ctx)
 
@@ -17,7 +17,7 @@ func (fs *Filscaner) display_notifi_(header *store.HeadChange) {
 		head.Height(), head.Key())
 }
 
-func (fs *Filscaner) handle_new_headers(headers []*store.HeadChange) {
+func (fs *Filscaner) handle_new_headers(headers []*api.HeadChange) {
 
 	for _, header := range headers {
 		if header == nil {
