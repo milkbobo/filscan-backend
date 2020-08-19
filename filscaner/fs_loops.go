@@ -7,6 +7,7 @@ import (
 	"time"
 	"github.com/filecoin-project/specs-actors/actors/abi"
 	"github.com/filecoin-project/lotus/chain/types"
+	"github.com/filecoin-project/lotus/chain/store"
 )
 
 func (fs *Filscaner) display_notifi_(header *api.HeadChange) {
@@ -27,20 +28,17 @@ func (fs *Filscaner) handle_new_headers(headers []*api.HeadChange) {
 		}
 
 		fs.display_notifi_(header)
-		// TODO WEN
-		/*
+
 		if header.Type == store.HCApply {
 			fs.handle_appl_tipset(header.Val, nil)
 			fs.last_appl_tipset = header.Val
 		}
-		*/
 	}
 }
 
 func (fs *Filscaner) sync_tipset_with_heights(heights []uint64) error {
 	for _, height := range heights {
 		tipset, err := fs.api.ChainGetTipSetByHeight(fs.ctx, abi.ChainEpoch(height), types.EmptyTSK)
-		tipset = tipset
 		if err != nil {
 			//TODO:判断是否为lotus节点crush掉, 或者是网络问题,
 			// 如果是, 应该过一段时间后, 重新尝试获取
@@ -53,8 +51,7 @@ func (fs *Filscaner) sync_tipset_with_heights(heights []uint64) error {
 		case <-fs.ctx.Done():
 			return fs.ctx.Err()
 		default:
-			// TODO WEN
-			//fs.head_notifier <- &store.HeadChange{Val: tipset, Type: store.HCApply}
+			fs.head_notifier <- &api.HeadChange{Val: tipset, Type: store.HCApply}
 		}
 		// time.Sleep(time.Millisecond * 200)
 	}
