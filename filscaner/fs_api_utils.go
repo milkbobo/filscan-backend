@@ -14,6 +14,7 @@ import (
 
 	"filscan_lotus/models"
 	po "github.com/filecoin-project/specs-actors/actors/builtin/power"
+	"github.com/filecoin-project/specs-actors/actors/builtin"
 	"github.com/filecoin-project/specs-actors/actors/abi"
 )
 
@@ -143,13 +144,22 @@ func (fs *Filscaner) api_child_tipset(tipset *types.TipSet) (*types.TipSet, erro
 	return nil, errs.ErrNotFound
 }
 
-	// TODO:WEN
-	/*
 func (fs *Filscaner) API_block_rewards(tipset *types.TipSet) *big.Int {
-	actor, err := fs.api.StateGetActor(fs.ctx, actors.NetworkAddress, tipset.Key())
+	actor, err := fs.api.StateGetActor(fs.ctx, builtin.RewardActorAddr, tipset.Key())
 	if err != nil {
 		return nil
 	}
-	return 
+	// TODO WEN
+	return actor.Balance.Int
+
 }
-	*/
+
+/*
+func MiningReward(remainingReward types.BigInt) types.BigInt {
+	ci := big.NewInt(0).Set(remainingReward.Int)
+	res := ci.Mul(ci, build.InitialReward)
+	res = res.Div(res, miningRewardTotal.Int)
+	res = res.Div(res, blocksPerEpoch.Int)
+	return types.BigInt{res}
+}
+*/
