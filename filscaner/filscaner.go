@@ -179,6 +179,7 @@ func (fs *Filscaner) Run() {
 	fs.Task_StartHandleMessage()
 	fs.Task_StartSyncer()
 	// fs.Task_StartSyncLostTipsets()
+	fs.Task_InitBlockRewards()
 }
 
 func (fs *Filscaner) ini_ChaingenesisTime() error {

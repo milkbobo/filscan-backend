@@ -275,7 +275,6 @@ func (fs *Filscaner) api_tipset_blockmessages_and_receipts(tipset *types.TipSet,
 
 	tpst_blms.Tipset = tipset
 
-	//TODO:WEN
 	tpst_blms.BlockRwds = fs.API_block_rewards(tipset)
 
 

@@ -44,6 +44,7 @@ func (fs *Filscaner) future_block_rewards(timediff, repeate uint64) ([]*big.Int,
 
 		for c := uint64(0); c < block_diff; c += block_daliy.Uint64() {
 			// TODO WEN
+			// a 应该是当前单个区块奖励
 			//a := vm.MiningReward(coffer)
 			a:=big.NewInt(0)
 			a.Mul(a, blocksPerEpoch)
