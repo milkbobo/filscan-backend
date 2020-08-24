@@ -15,7 +15,7 @@ import (
 
 // const PrecisionDefault = 8 // float64(0.00001)
 
-// TODO WEN
+// WEN 
 var blocksPerEpoch = big.NewInt(int64(5))
 
 // 返回每个周期中的奖励filcoin数量和释放的奖励数量

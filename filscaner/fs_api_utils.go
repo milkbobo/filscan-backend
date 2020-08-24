@@ -9,7 +9,6 @@ import (
 	//"github.com/filecoin-project/lotus/chain/actors"
 	"github.com/filecoin-project/lotus/chain/types"
 	//"github.com/filecoin-project/lotus/chain/vm"
-	core "github.com/libp2p/go-libp2p-core"
 	"math/big"
 
 	"filscan_lotus/models"
@@ -20,11 +19,9 @@ import (
 
 func (fs *Filscaner) api_miner_state_at_tipset(miner_addr address.Address, tipset *types.TipSet) (*models.MinerStateAtTipset, error) {
 	var (
-		peerid              core.PeerID
-		owner               address.Address
 		power               *api.MinerPower
 		sectors             []*api.ChainSectorInfo
-		sector_size         uint64
+		miner_info	    api.MinerInfo
 		proving_sector_size = models.NewBigintFromInt64(0)
 		err                 error
 	)
@@ -47,57 +44,44 @@ func (fs *Filscaner) api_miner_state_at_tipset(miner_addr address.Address, tipse
 		}
 	}
 
-	if sectors, err = fs.api.StateMinerSectors(fs.ctx, miner_addr, nil, true, tipset.Key()); err != nil {
+	if sectors, err = fs.api.StateMinerSectors(fs.ctx, miner_addr, nil, false, tipset.Key()); err != nil {
 		fs.Printf("get miner sector failed, message:%s\n", err.Error())
 		return nil, err
 	}
 
-	// TODO:WEN
-	/*
-	if peerid, err = fs.api.StateMinerPeerID(fs.ctx, miner_addr, tipset); err != nil {
-		// fs.Printf("get peerid failed, address=%s message:%s\n", miner_addr.String(), err.Error())
+	if miner_info, err = fs.api.StateMinerInfo(fs.ctx, miner_addr, tipset.Key()); err != nil {
+		fs.Printf("get miner miner info failed, message:%s\n", err.Error())
 	}
 
-	if owner, err = fs.api.StateMinerWorker(fs.ctx, miner_addr, tipset); err != nil {
-		fs.Printf("get miner worker failed, message:%s\n", err.Error())
-		return nil, err
-	}
-
-	if sector_size, err = fs.api.StateMinerSectorSize(fs.ctx, miner_addr, tipset); err != nil {
-		fs.Printf("get miner sectorsize failed, message:%s\n", err.Error())
-		return nil, err
-	}
-	*/
 
 	if proving_sector, err := fs.api.StateMinerProvingSet(fs.ctx, miner_addr, tipset.Key()); err != nil {
 		fs.Printf("state_miner_proving_set failed, message:%s\n", err.Error())
 	} else {
-		proving_sector_size.Set(big.NewInt(0).Mul(big.NewInt(int64(sector_size)), big.NewInt(int64(len(proving_sector)))))
+		proving_sector_size.Set(big.NewInt(0).Mul(big.NewInt(int64(miner_info.SectorSize)), big.NewInt(int64(len(proving_sector)))))
 	}
-	
-	// TODO:WEN
-	/*
+
 	// 这里应该是把错误的数据使用最近的数据来代替19807040628566131532430835712
-	if len(power.TotalPower.String()) >= 29 {
+	if len(power.TotalPower.RawBytePower.String()) >= 29 {
 		if fs.latest_total_power != nil {
-			power.TotalPower.Set(fs.latest_total_power)
+			power.TotalPower.RawBytePower.Set(fs.latest_total_power)
 		} else {
-			power.TotalPower.SetUint64(0)
+			power.TotalPower.RawBytePower.SetUint64(0)
 		}
 	} else {
 		if fs.latest_total_power == nil {
 			fs.latest_total_power = big.NewInt(0)
 		}
-		fs.latest_total_power.Set(power.TotalPower.Int)
+		fs.latest_total_power.Set(power.TotalPower.RawBytePower.Int)
 	}
-*/
+
 	miner := &models.MinerStateAtTipset{
-		PeerId:            peerid.String(),
+		PeerId:            miner_info.PeerId.String(),
 		MinerAddr:         miner_addr.String(),
-		Power:             models.NewBigintFromInt64(int64(0)),
-		TotalPower:        models.NewBigintFromInt64(int64(0)),
-		SectorSize:        sector_size,
-		WalletAddr:        owner.String(),
+		// WEN need add quality adjusted power
+		Power:             models.NewBigInt(power.MinerPower.RawBytePower.Int),
+		TotalPower:        models.NewBigInt(power.TotalPower.RawBytePower.Int),
+		SectorSize:        uint64(miner_info.SectorSize),
+		WalletAddr:        miner_info.Owner.String(),
 		SectorCount:       uint64(len(sectors)),
 		TipsetHeight:      uint64(tipset.Height()),
 		ProvingSectorSize: proving_sector_size,
@@ -150,6 +134,7 @@ func (fs *Filscaner) API_block_rewards(tipset *types.TipSet) *big.Int {
 		return nil
 	}
 	// TODO WEN
+	fmt.Println("wen:",actor.Balance.Int)
 	return actor.Balance.Int
 
 }
