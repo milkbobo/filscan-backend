@@ -128,7 +128,7 @@ func Loop_WalkThroughTipsetRewards(ctx context.Context) error {
 		}
 	}
 
-	remaining_filcoin := types.FromFil(build.TotalFilecoin)
+	remaining_filcoin := types.FromFil(build.FilBase)
 	remaining_filcoin.Sub(remaining_filcoin.Int, last_tipset_rewards.TotalRealeasedRewards.Int)
 
 	for {

@@ -54,7 +54,7 @@ func (fs *Filscaner) api_miner_state_at_tipset(miner_addr address.Address, tipse
 	}
 
 
-	if proving_sector, err := fs.api.StateMinerProvingSet(fs.ctx, miner_addr, tipset.Key()); err != nil {
+	if proving_sector, err := fs.api.StateMinerActiveSectors(fs.ctx, miner_addr, tipset.Key()); err != nil {
 		fs.Printf("state_miner_proving_set failed, message:%s\n", err.Error())
 	} else {
 		proving_sector_size.Set(big.NewInt(0).Mul(big.NewInt(int64(miner_info.SectorSize)), big.NewInt(int64(len(proving_sector)))))
