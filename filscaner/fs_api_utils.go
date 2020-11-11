@@ -6,22 +6,23 @@ import (
 	"fmt"
 	"github.com/filecoin-project/go-address"
 	"github.com/filecoin-project/lotus/api"
+	"github.com/filecoin-project/lotus/chain/actors/builtin/miner"
 	//"github.com/filecoin-project/lotus/chain/actors"
 	"github.com/filecoin-project/lotus/chain/types"
 	//"github.com/filecoin-project/lotus/chain/vm"
 	"math/big"
 
 	"filscan_lotus/models"
-	po "github.com/filecoin-project/specs-actors/actors/builtin/power"
+	"github.com/filecoin-project/go-state-types/abi"
 	"github.com/filecoin-project/specs-actors/actors/builtin"
-	"github.com/filecoin-project/specs-actors/actors/abi"
+	po "github.com/filecoin-project/lotus/chain/actors/builtin/power"
 )
 
 func (fs *Filscaner) api_miner_state_at_tipset(miner_addr address.Address, tipset *types.TipSet) (*models.MinerStateAtTipset, error) {
 	var (
 		power               *api.MinerPower
-		sectors             []*api.ChainSectorInfo
-		miner_info	    api.MinerInfo
+		sectors             []*miner.SectorOnChainInfo
+		miner_info          miner.MinerInfo
 		proving_sector_size = models.NewBigintFromInt64(0)
 		err                 error
 	)
@@ -35,7 +36,7 @@ func (fs *Filscaner) api_miner_state_at_tipset(miner_addr address.Address, tipse
 			fs.Printf("get miner(%s) power failed, message:%s\n", miner_addr.String(), err_message)
 
 			if power, err = fs.api.StateMinerPower(fs.ctx, address.Undef, tipset.Key()); err == nil {
-				power.MinerPower = po.Claim{abi.NewStoragePower(0),abi.NewStoragePower(0)}
+				power.MinerPower = po.Claim{abi.NewStoragePower(0), abi.NewStoragePower(0)}
 			}
 		}
 		if err != nil {
@@ -44,7 +45,7 @@ func (fs *Filscaner) api_miner_state_at_tipset(miner_addr address.Address, tipse
 		}
 	}
 
-	if sectors, err = fs.api.StateMinerSectors(fs.ctx, miner_addr, nil, false, tipset.Key()); err != nil {
+	if sectors, err = fs.api.StateMinerSectors(fs.ctx, miner_addr, nil, tipset.Key()); err != nil {
 		fs.Printf("get miner sector failed, message:%s\n", err.Error())
 		return nil, err
 	}
@@ -52,7 +53,6 @@ func (fs *Filscaner) api_miner_state_at_tipset(miner_addr address.Address, tipse
 	if miner_info, err = fs.api.StateMinerInfo(fs.ctx, miner_addr, tipset.Key()); err != nil {
 		fs.Printf("get miner miner info failed, message:%s\n", err.Error())
 	}
-
 
 	if proving_sector, err := fs.api.StateMinerActiveSectors(fs.ctx, miner_addr, tipset.Key()); err != nil {
 		fs.Printf("state_miner_proving_set failed, message:%s\n", err.Error())
@@ -75,8 +75,8 @@ func (fs *Filscaner) api_miner_state_at_tipset(miner_addr address.Address, tipse
 	}
 
 	miner := &models.MinerStateAtTipset{
-		PeerId:            miner_info.PeerId.String(),
-		MinerAddr:         miner_addr.String(),
+		PeerId:    miner_info.PeerId.String(),
+		MinerAddr: miner_addr.String(),
 		// WEN need add quality adjusted power
 		Power:             models.NewBigInt(power.MinerPower.RawBytePower.Int),
 		TotalPower:        models.NewBigInt(power.TotalPower.RawBytePower.Int),
@@ -134,7 +134,7 @@ func (fs *Filscaner) API_block_rewards(tipset *types.TipSet) *big.Int {
 		return nil
 	}
 	// TODO WEN
-	fmt.Println("wen:",actor.Balance.Int)
+	fmt.Println("wen:", actor.Balance.Int)
 	return actor.Balance.Int
 
 }

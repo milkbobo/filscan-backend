@@ -753,10 +753,10 @@ func GetLotusHead() (tipset *types.TipSet, err error) {
 	return
 }
 
-func GetPledgeCollateral(tipset *types.TipSet) (string, error) {
-	bigInt, err := LotusApi.StatePledgeCollateral(context.TODO(), tipset.Key())
-	if err != nil {
-		return "", err
-	}
-	return types.FIL(bigInt).String(), err
-}
+//func GetPledgeCollateral(tipset *types.TipSet) (string, error) {
+//	bigInt, err := LotusApi.StatePledgeCollateral(context.TODO(), tipset.Key())
+//	if err != nil {
+//		return "", err
+//	}
+//	return types.FIL(bigInt).String(), err
+//}

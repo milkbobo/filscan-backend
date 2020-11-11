@@ -205,13 +205,13 @@ func (this *FilscanServer) BaseInformation(ctx context.Context, input *common.Em
 			//resp.Res = res
 			//return resp, nil
 		} else {
-			pcString, err = GetPledgeCollateral(tipset)
-			if err != nil {
-				log("GetPledgeCollateral search err=%v", err)
-				resp.Res = &common.Result{Code: 5, Msg: "GetPledgeCollateral err "}
-
-				return resp, nil
-			}
+			//pcString, err = GetPledgeCollateral(tipset)
+			//if err != nil {
+			//	log("GetPledgeCollateral search err=%v", err)
+			//	resp.Res = &common.Result{Code: 5, Msg: "GetPledgeCollateral err "}
+			//
+			//	return resp, nil
+			//}
 		}
 		// if TipsetQueue.Size() > 0 {
 		if flscaner.List().Size() > 0 {
@@ -228,7 +228,7 @@ func (this *FilscanServer) BaseInformation(ctx context.Context, input *common.Em
 		allMsg := flscaner.List().MesageAll()
 		var cashTotalPrice, cashTotalSize uint64
 		for _, value := range allMsg {
-			cashTotalPrice += value.Message.GasPrice.Uint64()
+			cashTotalPrice += value.Message.GasPremium.Uint64()
 			cashTotalSize += uint64(value.Size)
 		}
 		if msgCount+len(allMsg) > 0 {
