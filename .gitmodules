@@ -1,4 +1,0 @@
-[submodule "extern/lotus"]
-	path = extern/lotus
-	url = git@gitee.com:lsyao/lotus.git 
-	ignore = dirty
